@@ -89,7 +89,7 @@
   )
 )
 
-;; New function to update token price
+;; Updated function to update token price with additional checks
 (define-public (update-token-price (token-id uint) (new-price uint))
   (let
     (
@@ -100,6 +100,8 @@
     (asserts! (is-eq tx-sender (var-get contract-admin)) err-not-authorized)
     ;; Validate new price
     (asserts! (> new-price u0) err-invalid-price-update)
+    ;; Validate token-id
+    (asserts! (is-valid-token token-id) err-token-not-found)
     ;; Update token price
     (map-set tokens
       { token-id: token-id }
