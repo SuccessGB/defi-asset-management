@@ -91,3 +91,23 @@
   )
 )
 
+;; Function to get authorized amount
+(define-read-only (get-authorized-amount (holder principal) (authorized principal) (token-id uint))
+  (default-to { allowed-amount: u0 }
+    (map-get? allowances { holder: holder, authorized: authorized, token-id: token-id })
+  )
+)
+
+;; Function to transfer tokens
+(define-public (transfer (recipient principal) (token-id uint) (transfer-amount uint))
+  (let
+    (
+      (sender tx-sender)
+    )
+    (asserts! (is-valid-token token-id) err-token-not-found)
+    (asserts! (not (is-eq recipient sender)) err-invalid-recipient)
+    (asserts! (> transfer-amount u0) err-invalid-transfer-amount)
+    (process-transfer sender recipient token-id transfer-amount)
+  )
+)
+
